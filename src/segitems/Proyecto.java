@@ -14,8 +14,8 @@ import java.util.Iterator;
  */
 public class Proyecto {
  
-    private static ArrayList<Proyecto> proyectos = new ArrayList();
-    private static ArrayList<String> nombresProyectos = new ArrayList();
+    private static ArrayList<Proyecto> proyectos = new ArrayList<>();
+    private static ArrayList<String> nombresProyectos = new ArrayList<>();
     private String nombre;
     private Miembro lider;
 //    private ArrayList<Miembro> miembros;

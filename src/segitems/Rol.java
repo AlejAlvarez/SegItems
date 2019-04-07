@@ -9,6 +9,8 @@ package segitems;
  *
  * @author Alejandro
  */
+
+//PENSAR SOBRE DIVIDIR ROL LEADER EN PROJECT_LEADER Y TEAM_LEADER
 public enum Rol {
     ADMIN,
     LEADER,

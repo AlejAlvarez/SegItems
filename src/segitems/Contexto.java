@@ -15,6 +15,8 @@ public class Contexto {
         Proyecto.cargarProyectosEjemplo();
         Miembro.cargarMiembrosEjemplo();
         Miembro.asignarLideresEjemplo();
+        TipoItem.cargarTiposItemEjemplo();
+        Item.cargarItemsEjemplo();
     }
     
 }

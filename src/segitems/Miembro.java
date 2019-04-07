@@ -21,10 +21,10 @@ public class Miembro {
     private String usuario;
     private String pass;
     private ArrayList<Item> itemsEnviados;
-    private ArrayList<Item> itemsACargo;    
-    private boolean hayAviso;
+    private ArrayList<Item> itemsACargo;
     private ArrayList<String> avisos;
     private Proyecto proyecto;
+    private Equipo equipo;
     
     public Miembro(){
         
@@ -35,8 +35,10 @@ public class Miembro {
         this.dni = dni;
         this.usuario = usuario;
         this.pass = pass;
-        this.hayAviso = false;
         this.rol = Rol.USER;
+        itemsEnviados = new ArrayList<>();
+        itemsACargo = new ArrayList<>();
+        avisos = new ArrayList<>();
     }
 
     public Miembro(String nombre, long dni, String usuario, String pass, Proyecto proyecto) {
@@ -46,6 +48,32 @@ public class Miembro {
         this.pass = pass;
         this.proyecto = proyecto;
         this.rol = Rol.USER;
+        itemsEnviados = new ArrayList<>();
+        itemsACargo = new ArrayList<>();
+        avisos = new ArrayList<>();
+    }
+
+    public Miembro(String nombre, long dni, String usuario, String pass, Rol rol, Proyecto proyecto) {
+        this.nombre = nombre;
+        this.dni = dni;
+        this.rol = rol;
+        this.usuario = usuario;
+        this.pass = pass;
+        this.proyecto = proyecto;
+        itemsEnviados = new ArrayList<>();
+        itemsACargo = new ArrayList<>();
+        avisos = new ArrayList<>();
+    }
+
+    public Miembro(String nombre, long dni, String usuario, String pass, Rol rol) {
+        this.nombre = nombre;
+        this.dni = dni;
+        this.rol = rol;
+        this.usuario = usuario;
+        this.pass = pass;
+        itemsEnviados = new ArrayList<>();
+        itemsACargo = new ArrayList<>();
+        avisos = new ArrayList<>();
     }
     
     public static  void addMiembro(Miembro m){
@@ -92,7 +120,62 @@ public class Miembro {
         }
         return list;
     }
+    
+    public static void eliminarMiembro(String nombre){
+        Miembro m = buscarMiembroPorNombre(nombre);
+        m.equipo.getIntegrantes().remove(m);
+        if(m.equipo.esLider(m)){
+            if(m.equipo.getIntegrantes() != null){
+                m.equipo.setLider(m.equipo.getIntegrantes().get(0));
+            }
+            else{
+                m.equipo.setLider(null);
+            }
+        }
+        miembros.remove(m);
+    }
+    
+    public static void eliminarMiembro(Miembro m){
+        m.equipo.getIntegrantes().remove(m);
+        if(m.equipo.esLider(m)){
+            if(m.equipo.getIntegrantes() != null){
+                m.equipo.setLider(m.equipo.getIntegrantes().get(0));
+            }
+            else{
+                m.equipo.setLider(null);
+            }
+        }
+        miembros.remove(m);
+    }
+    
+    public void addAviso(String nombre){
+        avisos.add(nombre);
+    }
+    
+    public void eliminarItemEnviado(Item item){
+        itemsEnviados.remove(item);
+    }
+    
+    public void eliminarResponsabilidadItem(Item item){
+        itemsACargo.remove(item);
+    }
 
+    public void addItemEnviado(Item item){
+        this.itemsEnviados.add(item);
+    }
+    
+    public void addResponsabilidadItem(Item item){
+        this.itemsACargo.add(item);
+    }
+    
+    public ArrayList<Item> getItemsEnviados(){
+        return itemsEnviados;
+    }
+    
+    public ArrayList<Item> getResponsabilidadItems(){
+        return itemsACargo;
+    }
+    
     public Proyecto getProyecto() {
         return proyecto;
     }
@@ -117,17 +200,16 @@ public class Miembro {
         return rol;
     }
     
+    public void setRol(Rol rol){
+        this.rol = rol;
+    }
+    
     public boolean hayAviso() {
-        return hayAviso;
+        return !avisos.isEmpty();
     }
-    
-    public void setHayAviso(){
-        hayAviso = true;
-    }
-    
+        
     public void setAviso(String aviso){
         this.avisos.add(aviso);
-        setHayAviso();
     }
     
     public ArrayList<String> getAvisos(){
@@ -135,7 +217,6 @@ public class Miembro {
     }
     
     public void borrarAvisos(){
-        hayAviso = false;
         avisos.clear();
     }
 
@@ -167,8 +248,12 @@ public class Miembro {
         this.pass = pass;
     }
 
-    public void setHayAviso(boolean hayAviso) {
-        this.hayAviso = hayAviso;
+    public Equipo getEquipo() {
+        return equipo;
+    }
+
+    public void setEquipo(Equipo equipo) {
+        this.equipo = equipo;
     }
     
     public static void cargarMiembrosEjemplo(){

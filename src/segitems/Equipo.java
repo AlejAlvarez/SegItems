@@ -15,6 +15,10 @@ public class Equipo {
     private ArrayList<Miembro> integrantes;
     private Miembro lider;
     
+    public Equipo(){
+        integrantes = new ArrayList<>();
+    }
+    
     public void addIntegrante(Miembro m){
         integrantes.add(m);
     }
@@ -27,7 +31,15 @@ public class Equipo {
         return integrantes;
     }
     
+    public void setIntegrantes(ArrayList<Miembro> integrantes){
+        this.integrantes = integrantes;
+    }
+    
     public Miembro getLider(){
         return lider;
+    }
+    
+    public boolean esLider(Miembro m){
+        return m==lider;
     }
 }

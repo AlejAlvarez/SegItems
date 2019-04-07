@@ -24,6 +24,22 @@ public class SecuenciaEstados {
         this.estado = estado;
         this.ultFecha = ultFecha;
     }
+
+    public Item getItem() {
+        return item;
+    }
+
+    public Miembro getResponsable() {
+        return responsable;
+    }
+
+    public Estado getEstado() {
+        return estado;
+    }
+
+    public Date getUltFecha() {
+        return ultFecha;
+    }
     
     
     

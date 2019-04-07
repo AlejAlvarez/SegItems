@@ -8,6 +8,7 @@ package segitems;
 import java.util.Iterator;
 import javax.swing.DefaultListModel;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.ListModel;
 import javax.swing.ListSelectionModel;
@@ -29,14 +30,17 @@ public class AdminFrame extends javax.swing.JFrame {
     
     public AdminFrame(Miembro usuarioLogueado){
         initComponents();
+        setTitle("SegItems - Sistema de Seguimiento de Items");
+        
         usuarioAdmin.setText(usuarioLogueado.getUsuario());
         nombreAdmin.setText(usuarioLogueado.getNombre());
         rolAdmin.setText(usuarioLogueado.getRol() + "");
         nroDniAdmin.setText(usuarioLogueado.getDni() + "");
+        this.usuarioLogueado = usuarioLogueado;
         
         //INICIALIZACION JLIST PROYECTOS
         DefaultListModel<String> lmProyectos = new DefaultListModel<>();
-        lmProyectos.addElement("*Todos*");
+        lmProyectos.addElement("Todos");
         for (Proyecto p : Proyecto.getProyectos()){
             lmProyectos.addElement(p.getNombre());
         }
@@ -49,11 +53,23 @@ public class AdminFrame extends javax.swing.JFrame {
                 new ListSelectionListener(){
                     public void valueChanged(ListSelectionEvent event){
                         if (listaProyectos.getValueIsAdjusting() == false) {
-                            if (listaProyectos.getSelectedValue() == "*Todos*"){
+                            if (listaProyectos.getSelectedValue() == "Todos"){
                                 //TODO: MOSTRAR TODOS LOS TIPOS DE ITEM Y LOS ITEMS EN LAS SIGUIENTES 2 PESTAÑAS
                                 nombreProyecto.setText("");
                                 liderProyecto.setText("");
                                 listaMiembrosProyecto.setModel(new DefaultListModel());
+
+                                DefaultListModel<String> lmTiposItem = new DefaultListModel<>();
+                                lmTiposItem.addElement("Todos");
+                                for (TipoItem tipo : TipoItem.getTiposItem()){
+                                    lmTiposItem.addElement(tipo.getNombre());
+                                }
+                                
+                                listaTiposItem.clearSelection();
+                                listaTiposItem.setModel(lmTiposItem);
+                                listaTiposItem.setVisibleRowCount(8);
+                                listaTiposItem.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+                                listaTiposItem.setLayoutOrientation(JList.VERTICAL);                                
                             }
                             else{
                                 Proyecto p = Proyecto.buscarProyecto(listaProyectos.getSelectedValue());
@@ -68,12 +84,130 @@ public class AdminFrame extends javax.swing.JFrame {
                                 listaMiembrosProyecto.setModel(lmMiembros);
                                 listaMiembrosProyecto.setVisibleRowCount(8);
                                 listaMiembrosProyecto.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-                                listaMiembrosProyecto.setLayoutOrientation(JList.VERTICAL);                                
+                                listaMiembrosProyecto.setLayoutOrientation(JList.VERTICAL);
+
+                                DefaultListModel<String> lmTiposItem = new DefaultListModel<>();
+                                for (TipoItem tipo : TipoItem.buscarPorProyecto(p)){
+                                    lmTiposItem.addElement(tipo.getNombre());
+                                }
+                                
+                                listaTiposItem.clearSelection();
+                                listaTiposItem.setModel(lmTiposItem);
+                                listaTiposItem.setVisibleRowCount(8);
+                                listaTiposItem.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+                                listaTiposItem.setLayoutOrientation(JList.VERTICAL);                                     
                             }
                         }
                     }
+                });
+        
+        //INICIALIZACION DE LISTA TIPOS ITEM
+        DefaultListModel<String> lmTiposItem = new DefaultListModel<>();
+        lmTiposItem.addElement("Todos");
+        for (TipoItem tipo : TipoItem.getTiposItem()){
+            lmTiposItem.addElement(tipo.getNombre());
+        }
+
+        listaTiposItem.setModel(lmTiposItem);
+        listaTiposItem.setVisibleRowCount(8);
+        listaTiposItem.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        listaTiposItem.setLayoutOrientation(JList.VERTICAL); 
+        
+        listaTiposItem.addListSelectionListener(
+                new ListSelectionListener(){
+                    public void valueChanged (ListSelectionEvent event){
+                        if (listaTiposItem.getValueIsAdjusting()==false){
+                            if (!listaTiposItem.isSelectionEmpty()){
+                                if (listaTiposItem.getSelectedValue() == "Todos"){
+                                    listaEquipoTipoItem.setModel(new DefaultListModel<>());
+                                    listaEstadosTipoItem.setModel(new DefaultListModel<>());
+                                    
+                                    DefaultListModel<String> lmItems = new DefaultListModel<>();
+                                    for (Item item : Item.getItems()){
+                                        lmItems.addElement(item.getNombre());
+                                    }
+                                    listaItems.setModel(lmItems);
+                                    listaItems.setVisibleRowCount(8);
+                                    listaItems.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+                                    listaItems.setLayoutOrientation(JList.VERTICAL); 
+                                }
+                                else{
+                                    TipoItem tipo = TipoItem.buscarTipoItem(listaTiposItem.getSelectedValue());
+
+                                    DefaultListModel<String> lmEquipo = new DefaultListModel<>();
+                                    for (Miembro m : tipo.getEquipo().getIntegrantes()){
+                                        lmEquipo.addElement(m.getNombre());
+                                    }
+
+                                    listaEquipoTipoItem.setModel(lmEquipo);
+                                    listaEquipoTipoItem.setVisibleRowCount(8);
+                                    listaEquipoTipoItem.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+                                    listaEquipoTipoItem.setLayoutOrientation(JList.VERTICAL); 
+
+                                    DefaultListModel<String> lmEstados = new DefaultListModel<>();
+                                    for (Estado e : tipo.getEstados()){
+                                        lmEstados.addElement(e.getNombre());
+                                    }
+
+                                    listaEstadosTipoItem.setModel(lmEstados);
+                                    listaEstadosTipoItem.setVisibleRowCount(8);
+                                    listaEstadosTipoItem.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+                                    listaEstadosTipoItem.setLayoutOrientation(JList.VERTICAL);
+                                    
+                                    DefaultListModel<String> lmItems = new DefaultListModel<>();
+                                    for (Item item : Item.buscarPorTipoItem(tipo)){
+                                        lmItems.addElement(item.getNombre());
+                                    }
+                                    listaItems.setModel(lmItems);
+                                    listaItems.setVisibleRowCount(8);
+                                    listaItems.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+                                    listaItems.setLayoutOrientation(JList.VERTICAL);                                                                      
+                                }
+                            }
+                            else{
+                                listaEquipoTipoItem.setModel(new DefaultListModel<>());
+                                listaEstadosTipoItem.setModel(new DefaultListModel<>());
+                            }
+                        }
+                    }
+                });
+        
+        //INICIALIZACION LISTA ITEMS GENERALES
+        DefaultListModel<String> lmItems = new DefaultListModel<>();
+        for (Item item : Item.getItems()){
+            lmItems.addElement(item.getNombre());
+        }
+        listaItems.setModel(lmItems);
+        listaItems.setVisibleRowCount(8);
+        listaItems.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        listaItems.setLayoutOrientation(JList.VERTICAL);
+        listaItems.addListSelectionListener(
+                new ListSelectionListener(){
+                    public void valueChanged (ListSelectionEvent event){
+                        if(listaItems.getValueIsAdjusting() == false){
+                            if(listaItems.isSelectionEmpty() == false){
+                                Item item = Item.buscarItem(listaItems.getSelectedValue());
+                                nombreItem.setText(item.getNombre());
+                                tipoItem.setText(item.getTipoItem().getNombre());
+                                prioridadItem.setText(item.getPrioridad() + "");
+                                duenoItem.setText(item.getUsuario().getNombre());
+                                estadoItem.setText(item.getEstado().getNombre());
+                                responsableItem.setText(item.getResponsable().getNombre());
+                                
+                                textAreaSecuenciaEstados.setText("");
+                                //RELLENAR LA SECUENCIA DE ESTADOS
+                                for (SecuenciaEstados sec : item.getSecuenciaEstados()){
+                                    textAreaSecuenciaEstados.append("Item: " + sec.getItem().getNombre() + "\n"
+                                                            + "Estado: " + sec.getEstado().getNombre() + "\n"
+                                                            + "Responsable: " + sec.getResponsable().getNombre() + "\n"
+                                                            + "Última Fecha: " + sec.getUltFecha() + "\n"
+                                                            + "------------------------------------------- \n");
+                                }
+                            }
+                        }
+                    }                    
                 }
-        );
+        );        
         
         //INICIALIZACION JLIST MIEMBROS GENERALES
         DefaultListModel<String> lmMiembros = new DefaultListModel<>();
@@ -89,15 +223,64 @@ public class AdminFrame extends javax.swing.JFrame {
                 new ListSelectionListener(){
                     public void valueChanged(ListSelectionEvent event){
                         if (listaMiembros.getValueIsAdjusting() == false) {
-                            Miembro m = Miembro.buscarMiembroPorNombre(listaMiembros.getSelectedValue());
-                            nombreMiembro.setText(m.getNombre());
-                            dniMiembro.setText(m.getDni() + "");
-                            rolMiembro.setText(m.getRol() + "");
-                            usuarioMiembro.setText(m.getUsuario());
+                            if(!listaMiembros.isSelectionEmpty()){
+                                Miembro m = Miembro.buscarMiembroPorNombre(listaMiembros.getSelectedValue());
+                                nombreMiembro.setText(m.getNombre());
+                                dniMiembro.setText(m.getDni() + "");
+                                rolMiembro.setText(m.getRol() + "");
+                                usuarioMiembro.setText(m.getUsuario());
+                                
+                                DefaultListModel<String> lmItemsEnviadosMiembro = new DefaultListModel<>();
+                                for (Item item : m.getItemsEnviados()){
+                                    lmItemsEnviadosMiembro.addElement(item.getNombre());
+                                }
+                                listaItemsEnviadosMiembro.setModel(lmItemsEnviadosMiembro);
+                                listaItemsEnviadosMiembro.setVisibleRowCount(8);
+                                listaItemsEnviadosMiembro.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+                                listaItemsEnviadosMiembro.setLayoutOrientation(JList.VERTICAL);
+                                
+                                DefaultListModel<String> lmItemsACargoMiembro = new DefaultListModel<>();
+                                for (Item item : m.getResponsabilidadItems()){
+                                    lmItemsACargoMiembro.addElement(item.getNombre());
+                                }
+                                listaItemsACargoMiembro.setModel(lmItemsACargoMiembro);
+                                listaItemsACargoMiembro.setVisibleRowCount(8);
+                                listaItemsACargoMiembro.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+                                listaItemsACargoMiembro.setLayoutOrientation(JList.VERTICAL); 
+                            }
+                            else{
+                                nombreMiembro.setText("");
+                                dniMiembro.setText("");
+                                rolMiembro.setText("");
+                                usuarioMiembro.setText("");     
+                                
+                                listaItemsEnviadosMiembro.setModel(new DefaultListModel<>());
+                                listaItemsACargoMiembro.setModel(new DefaultListModel<>());
+                            }
                         }
                     }
                 }
         );
+        
+        //INICIALIZACION LISTA ITEMS ENVIADOS DEL USUARIO LOGUEADO
+        DefaultListModel<String> lmItemsEnviadosAdmin = new DefaultListModel<>();
+        for (Item item : usuarioLogueado.getItemsEnviados()){
+            lmItemsEnviadosAdmin.addElement(item.getNombre());
+        }
+        listaItemsEnviadosAdmin.setModel(lmItemsEnviadosAdmin);
+        listaItemsEnviadosAdmin.setVisibleRowCount(8);
+        listaItemsEnviadosAdmin.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        listaItemsEnviadosAdmin.setLayoutOrientation(JList.VERTICAL);
+        
+        //INICIALIZACION LISTA ITEMS A CARGO DEL USUARIO LOGUEADO
+        DefaultListModel<String> lmItemsACargoAdmin = new DefaultListModel<>();
+        for (Item item : usuarioLogueado.getResponsabilidadItems()){
+            lmItemsACargoAdmin.addElement(item.getNombre());
+        }
+        listaItemsACargoAdmin.setModel(lmItemsACargoAdmin);
+        listaItemsACargoAdmin.setVisibleRowCount(8);
+        listaItemsACargoAdmin.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        listaItemsACargoAdmin.setLayoutOrientation(JList.VERTICAL); 
     }
 
     /**
@@ -258,6 +441,11 @@ public class AdminFrame extends javax.swing.JFrame {
         jPanel1.add(scrollPaneItemsEnviadosAdmin, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 228, 220, 250));
 
         botonEnviarItem.setText("Enviar nuevo Item");
+        botonEnviarItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                botonEnviarItemActionPerformed(evt);
+            }
+        });
         jPanel1.add(botonEnviarItem, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 490, 220, -1));
 
         jLabel7.setText("Items a cargo");
@@ -268,6 +456,11 @@ public class AdminFrame extends javax.swing.JFrame {
         jPanel1.add(scrollPaneItemsACargoAdmin, new org.netbeans.lib.awtextra.AbsoluteConstraints(479, 228, 220, 250));
 
         botonAvanzarEstado.setText("Avanzar Estado en Item");
+        botonAvanzarEstado.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                botonAvanzarEstadoActionPerformed(evt);
+            }
+        });
         jPanel1.add(botonAvanzarEstado, new org.netbeans.lib.awtextra.AbsoluteConstraints(480, 490, 220, -1));
 
         botonCerrarSesion.setText("Cerrar sesión");
@@ -283,6 +476,11 @@ public class AdminFrame extends javax.swing.JFrame {
         jPanel1.add(jSeparator2, new org.netbeans.lib.awtextra.AbsoluteConstraints(350, 0, 10, 160));
 
         botonVerAviso.setText("Ver avisos");
+        botonVerAviso.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                botonVerAvisoActionPerformed(evt);
+            }
+        });
         jPanel1.add(botonVerAviso, new org.netbeans.lib.awtextra.AbsoluteConstraints(480, 60, 190, -1));
 
         nroDniAdmin.setText("nroDniAdmin");
@@ -310,6 +508,7 @@ public class AdminFrame extends javax.swing.JFrame {
         jPanel2.add(jSeparator4, new org.netbeans.lib.awtextra.AbsoluteConstraints(280, 0, 10, 570));
 
         botonAgregarProyecto.setText("Agregar Proyecto");
+        botonAgregarProyecto.setEnabled(false);
         botonAgregarProyecto.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 botonAgregarProyectoActionPerformed(evt);
@@ -318,6 +517,7 @@ public class AdminFrame extends javax.swing.JFrame {
         jPanel2.add(botonAgregarProyecto, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 430, 240, -1));
 
         botonEliminarProyecto.setText("Eliminar Proyecto");
+        botonEliminarProyecto.setEnabled(false);
         jPanel2.add(botonEliminarProyecto, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 470, 240, -1));
 
         jLabel9.setFont(new java.awt.Font("Dialog", 1, 16)); // NOI18N
@@ -329,23 +529,25 @@ public class AdminFrame extends javax.swing.JFrame {
         jPanel2.add(jLabel10, new org.netbeans.lib.awtextra.AbsoluteConstraints(600, 110, -1, -1));
 
         botonAgregarMiembroProyecto.setText("Agregar Miembro");
+        botonAgregarMiembroProyecto.setEnabled(false);
         jPanel2.add(botonAgregarMiembroProyecto, new org.netbeans.lib.awtextra.AbsoluteConstraints(570, 420, 130, -1));
 
         botonQuitarMiembroProyecto.setText("Quitar Miembro");
+        botonQuitarMiembroProyecto.setEnabled(false);
         jPanel2.add(botonQuitarMiembroProyecto, new org.netbeans.lib.awtextra.AbsoluteConstraints(570, 460, 130, -1));
 
         jLabel11.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
         jLabel11.setText("Nombre:");
         jPanel2.add(jLabel11, new org.netbeans.lib.awtextra.AbsoluteConstraints(310, 110, -1, -1));
 
-        nombreProyecto.setText("nombre de proyecto");
+        nombreProyecto.setText("-");
         jPanel2.add(nombreProyecto, new org.netbeans.lib.awtextra.AbsoluteConstraints(320, 140, -1, -1));
 
         jLabel13.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
         jLabel13.setText("Líder:");
         jPanel2.add(jLabel13, new org.netbeans.lib.awtextra.AbsoluteConstraints(310, 220, -1, -1));
 
-        liderProyecto.setText("lider de proyecto");
+        liderProyecto.setText("-");
         jPanel2.add(liderProyecto, new org.netbeans.lib.awtextra.AbsoluteConstraints(320, 250, -1, -1));
 
         jTabbedPane1.addTab("Proyectos", jPanel2);
@@ -377,9 +579,16 @@ public class AdminFrame extends javax.swing.JFrame {
         jPanel3.add(jLabel16, new org.netbeans.lib.awtextra.AbsoluteConstraints(440, 20, -1, -1));
 
         botonAgregarTipoItem.setText("Agregar Tipo de Item");
+        botonAgregarTipoItem.setEnabled(false);
+        botonAgregarTipoItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                botonAgregarTipoItemActionPerformed(evt);
+            }
+        });
         jPanel3.add(botonAgregarTipoItem, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 430, 240, -1));
 
         botonEliminarTipoItem.setText("Eliminar Tipo de Item");
+        botonEliminarTipoItem.setEnabled(false);
         jPanel3.add(botonEliminarTipoItem, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 470, 240, -1));
 
         jLabel17.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
@@ -391,15 +600,19 @@ public class AdminFrame extends javax.swing.JFrame {
         jPanel3.add(jLabel18, new org.netbeans.lib.awtextra.AbsoluteConstraints(630, 90, -1, -1));
 
         botonAgregarMiembroEquipo.setText("Agregar Miembro");
+        botonAgregarMiembroEquipo.setEnabled(false);
         jPanel3.add(botonAgregarMiembroEquipo, new org.netbeans.lib.awtextra.AbsoluteConstraints(340, 430, 160, -1));
 
         botonQuitarMiembroEquipo.setText("Quitar Miembro");
+        botonQuitarMiembroEquipo.setEnabled(false);
         jPanel3.add(botonQuitarMiembroEquipo, new org.netbeans.lib.awtextra.AbsoluteConstraints(340, 470, 160, -1));
 
         botonAgregarEstadoTipoItem.setText("Agregar Estado");
+        botonAgregarEstadoTipoItem.setEnabled(false);
         jPanel3.add(botonAgregarEstadoTipoItem, new org.netbeans.lib.awtextra.AbsoluteConstraints(580, 430, 150, -1));
 
         botonQuitarEstadoTipoItem.setText("Quitar Estado");
+        botonQuitarEstadoTipoItem.setEnabled(false);
         jPanel3.add(botonQuitarEstadoTipoItem, new org.netbeans.lib.awtextra.AbsoluteConstraints(580, 470, 150, -1));
 
         jLabel2.setFont(new java.awt.Font("Dialog", 2, 10)); // NOI18N
@@ -445,27 +658,27 @@ public class AdminFrame extends javax.swing.JFrame {
         jPanel4.add(jLabel25, new org.netbeans.lib.awtextra.AbsoluteConstraints(310, 320, -1, 20));
 
         estadoItem.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
-        estadoItem.setText("Estado del Item");
+        estadoItem.setText("-");
         jPanel4.add(estadoItem, new org.netbeans.lib.awtextra.AbsoluteConstraints(330, 340, -1, -1));
 
         nombreItem.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
-        nombreItem.setText("Nombre del Item");
+        nombreItem.setText("-");
         jPanel4.add(nombreItem, new org.netbeans.lib.awtextra.AbsoluteConstraints(330, 100, -1, -1));
 
         tipoItem.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
-        tipoItem.setText("Tipo del Item");
+        tipoItem.setText("-");
         jPanel4.add(tipoItem, new org.netbeans.lib.awtextra.AbsoluteConstraints(330, 160, -1, -1));
 
         prioridadItem.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
-        prioridadItem.setText("Prioridad del Item");
+        prioridadItem.setText("-");
         jPanel4.add(prioridadItem, new org.netbeans.lib.awtextra.AbsoluteConstraints(330, 220, -1, -1));
 
         duenoItem.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
-        duenoItem.setText("Dueño del Item");
+        duenoItem.setText("-");
         jPanel4.add(duenoItem, new org.netbeans.lib.awtextra.AbsoluteConstraints(330, 280, -1, -1));
 
         responsableItem.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
-        responsableItem.setText("Responsable del Item");
+        responsableItem.setText("-");
         jPanel4.add(responsableItem, new org.netbeans.lib.awtextra.AbsoluteConstraints(330, 400, -1, -1));
 
         jLabel32.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
@@ -477,6 +690,11 @@ public class AdminFrame extends javax.swing.JFrame {
         jPanel4.add(jLabel45, new org.netbeans.lib.awtextra.AbsoluteConstraints(470, 20, -1, -1));
 
         botonCambiarResponsable.setText("Cambiar Responsable");
+        botonCambiarResponsable.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                botonCambiarResponsableActionPerformed(evt);
+            }
+        });
         jPanel4.add(botonCambiarResponsable, new org.netbeans.lib.awtextra.AbsoluteConstraints(310, 450, 160, -1));
 
         textAreaSecuenciaEstados.setEditable(false);
@@ -503,12 +721,27 @@ public class AdminFrame extends javax.swing.JFrame {
         jPanel5.add(scrollPaneItemsEnviadosMiembro, new org.netbeans.lib.awtextra.AbsoluteConstraints(540, 130, 230, 130));
 
         botonNuevoMiembro.setText("Nuevo Miembro");
+        botonNuevoMiembro.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                botonNuevoMiembroActionPerformed(evt);
+            }
+        });
         jPanel5.add(botonNuevoMiembro, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 430, 170, -1));
 
         botonEliminarMiembro.setText("Eliminar Miembro");
+        botonEliminarMiembro.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                botonEliminarMiembroActionPerformed(evt);
+            }
+        });
         jPanel5.add(botonEliminarMiembro, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 510, 170, -1));
 
         botonEditarMiembro.setText("Editar Miembro");
+        botonEditarMiembro.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                botonEditarMiembroActionPerformed(evt);
+            }
+        });
         jPanel5.add(botonEditarMiembro, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 470, 170, -1));
 
         jLabel33.setText("Nombre:");
@@ -528,19 +761,19 @@ public class AdminFrame extends javax.swing.JFrame {
         jPanel5.add(scrollPaneItemsACargoMiembro, new org.netbeans.lib.awtextra.AbsoluteConstraints(540, 350, 230, 130));
 
         nombreMiembro.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
-        nombreMiembro.setText("Nombre del Miembro");
+        nombreMiembro.setText("-");
         jPanel5.add(nombreMiembro, new org.netbeans.lib.awtextra.AbsoluteConstraints(330, 120, -1, -1));
 
         dniMiembro.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
-        dniMiembro.setText("DNI del Miembro");
+        dniMiembro.setText("-");
         jPanel5.add(dniMiembro, new org.netbeans.lib.awtextra.AbsoluteConstraints(330, 180, -1, -1));
 
         rolMiembro.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
-        rolMiembro.setText("Rol del Miembro");
+        rolMiembro.setText("-");
         jPanel5.add(rolMiembro, new org.netbeans.lib.awtextra.AbsoluteConstraints(330, 240, -1, -1));
 
         usuarioMiembro.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
-        usuarioMiembro.setText("User del Miembro");
+        usuarioMiembro.setText("-");
         jPanel5.add(usuarioMiembro, new org.netbeans.lib.awtextra.AbsoluteConstraints(330, 300, -1, -1));
 
         jLabel41.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
@@ -579,16 +812,215 @@ public class AdminFrame extends javax.swing.JFrame {
         LoginForm form = new LoginForm();
         form.setLocationRelativeTo(this);
         form.setVisible(true);
-        this.setVisible(false);
+        setVisible(false);
+        dispose();
     }//GEN-LAST:event_botonCerrarSesionActionPerformed
 
     private void botonEditarInfoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonEditarInfoActionPerformed
-        // TODO add your handling code here:
+        UserFormDialog dialogo = new UserFormDialog(this, true, usuarioLogueado);
+        dialogo.setLocationRelativeTo(this);
+        dialogo.setVisible(true);
+        if (!dialogo.isVisible()){
+            usuarioAdmin.setText(usuarioLogueado.getUsuario());
+            nombreAdmin.setText(usuarioLogueado.getNombre());
+            rolAdmin.setText(usuarioLogueado.getRol() + "");
+            nroDniAdmin.setText(usuarioLogueado.getDni() + "");            
+        }
+        
     }//GEN-LAST:event_botonEditarInfoActionPerformed
 
     private void botonAgregarProyectoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonAgregarProyectoActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_botonAgregarProyectoActionPerformed
+
+    private void botonAgregarTipoItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonAgregarTipoItemActionPerformed
+        //System.out.println(listaTiposItem.getSelectedValue());
+    }//GEN-LAST:event_botonAgregarTipoItemActionPerformed
+
+    private void botonEliminarMiembroActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonEliminarMiembroActionPerformed
+        
+        if(!listaMiembros.isSelectionEmpty()){
+            Miembro miembro = Miembro.buscarMiembroPorNombre(listaMiembros.getSelectedValue());
+            
+            if(miembro.getRol() != Rol.LEADER && miembro.getRol() != Rol.ADMIN){
+                Miembro.eliminarMiembro(miembro);
+
+                DefaultListModel<String> lmMiembros = new DefaultListModel<>();
+                for (Miembro m : Miembro.getMiembros()){
+                    lmMiembros.addElement(m.getNombre());
+                }
+                listaMiembros.setModel(lmMiembros);
+                listaMiembros.setVisibleRowCount(8);
+                listaMiembros.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+                listaMiembros.setLayoutOrientation(JList.VERTICAL);                
+            }
+            else{
+                JOptionPane.showMessageDialog(this, 
+                                               "Los Administradores y Líderes de Proyecto no pueden ser eliminados.",
+                                               "Error",
+                                               JOptionPane.ERROR_MESSAGE);
+            }
+        }
+        else{
+            JOptionPane.showMessageDialog(this, 
+                                           "Por favor, seleccione un usuario para eliminar",
+                                           "Error",
+                                           JOptionPane.WARNING_MESSAGE);            
+        }
+        
+    }//GEN-LAST:event_botonEliminarMiembroActionPerformed
+
+    private void botonNuevoMiembroActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonNuevoMiembroActionPerformed
+        UserFormDialog dialogo = new UserFormDialog(this, true);
+        dialogo.setLocationRelativeTo(this);
+        dialogo.setVisible(true);
+        if (!dialogo.isVisible()){
+            DefaultListModel<String> lmMiembros = new DefaultListModel<>();
+            for (Miembro m : Miembro.getMiembros()){
+                lmMiembros.addElement(m.getNombre());
+            }
+            listaMiembros.setModel(lmMiembros);
+            listaMiembros.setVisibleRowCount(8);
+            listaMiembros.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+            listaMiembros.setLayoutOrientation(JList.VERTICAL); 
+        }
+    }//GEN-LAST:event_botonNuevoMiembroActionPerformed
+
+    private void botonEditarMiembroActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonEditarMiembroActionPerformed
+        if(!listaMiembros.isSelectionEmpty()){
+            if(listaMiembros.getValueIsAdjusting() == false){
+                Miembro miembro = Miembro.buscarMiembroPorNombre(listaMiembros.getSelectedValue());
+                UserFormDialog dialogo = new UserFormDialog(this, true, miembro);
+                dialogo.setLocationRelativeTo(this);
+                dialogo.setVisible(true);
+                if (!dialogo.isVisible()){
+                    DefaultListModel<String> lmMiembros = new DefaultListModel<>();
+                    for (Miembro m : Miembro.getMiembros()){
+                        lmMiembros.addElement(m.getNombre());
+                    }
+                    listaMiembros.setModel(lmMiembros);
+                    listaMiembros.setVisibleRowCount(8);
+                    listaMiembros.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+                    listaMiembros.setLayoutOrientation(JList.VERTICAL); 
+                }
+            }            
+        }
+        else{
+            JOptionPane.showMessageDialog(this, 
+                                           "Por favor, seleccione un usuario para editar",
+                                           "Error",
+                                           JOptionPane.WARNING_MESSAGE);            
+        }
+    }//GEN-LAST:event_botonEditarMiembroActionPerformed
+
+    private void botonEnviarItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonEnviarItemActionPerformed
+        ItemFormDialog dialogo = new ItemFormDialog(this, true, usuarioLogueado);
+        dialogo.setLocationRelativeTo(this);
+        dialogo.setVisible(true);
+        if (!dialogo.isVisible()){
+            DefaultListModel<String> lmItemsEnviadosAdmin = new DefaultListModel<>();
+            for (Item item : usuarioLogueado.getItemsEnviados()){
+                lmItemsEnviadosAdmin.addElement(item.getNombre());
+            }
+            listaItemsEnviadosAdmin.setModel(lmItemsEnviadosAdmin);
+            listaItemsEnviadosAdmin.setVisibleRowCount(8);
+            listaItemsEnviadosAdmin.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+            listaItemsEnviadosAdmin.setLayoutOrientation(JList.VERTICAL); 
+        }
+    }//GEN-LAST:event_botonEnviarItemActionPerformed
+
+    private void botonVerAvisoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonVerAvisoActionPerformed
+        if(usuarioLogueado.hayAviso()){
+            String avisos = "";
+            for (String aviso : usuarioLogueado.getAvisos()){
+                avisos = avisos + aviso + "\n";
+            }
+            JOptionPane.showMessageDialog(this, 
+                                           "Se registraron cambios en los siguientes items: \n" + avisos,
+                                           "Aviso",
+                                           JOptionPane.INFORMATION_MESSAGE);             
+        }
+        else{
+            JOptionPane.showMessageDialog(this, 
+                                           "No se registraron cambios en sus Items",
+                                           "Sin avisos",
+                                           JOptionPane.INFORMATION_MESSAGE);             
+        }
+    }//GEN-LAST:event_botonVerAvisoActionPerformed
+
+    private void botonAvanzarEstadoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonAvanzarEstadoActionPerformed
+        if(listaItemsACargoAdmin.isSelectionEmpty() == false){
+            if(listaItemsACargoAdmin.getValueIsAdjusting() == false){
+                CambioEstadoDialog dialogo = new CambioEstadoDialog(this, true, 
+                        usuarioLogueado.getResponsabilidadItems().get(listaItemsACargoAdmin.getSelectedIndex()));
+                dialogo.setLocationRelativeTo(this);
+                dialogo.setVisible(true);
+                
+                if (!dialogo.isVisible()){
+                    DefaultListModel<String> lmItemsACargoAdmin = new DefaultListModel<>();
+                    for (Item item : usuarioLogueado.getResponsabilidadItems()){
+                        lmItemsACargoAdmin.addElement(item.getNombre());
+                    }
+                    listaItemsACargoAdmin.setModel(lmItemsACargoAdmin);
+                    listaItemsACargoAdmin.setVisibleRowCount(8);
+                    listaItemsACargoAdmin.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+                    listaItemsACargoAdmin.setLayoutOrientation(JList.VERTICAL); 
+                }
+            }
+        else{
+            JOptionPane.showMessageDialog(this, 
+                                           "Por favor, seleccione un Item de la lista de Items a Cargo para continuar.",
+                                           "Error",
+                                           JOptionPane.WARNING_MESSAGE);              
+            }
+        }
+    }//GEN-LAST:event_botonAvanzarEstadoActionPerformed
+
+    private void botonCambiarResponsableActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonCambiarResponsableActionPerformed
+        if(usuarioLogueado.getRol() == Rol.LEADER || (usuarioLogueado.getEquipo() != null && usuarioLogueado.getEquipo().esLider(usuarioLogueado))){
+            if(!listaItems.isSelectionEmpty()){
+                if(!listaItems.getValueIsAdjusting()){
+                    Item item = Item.buscarItem(listaItems.getSelectedValue());
+                    Miembro ultimoResponsable = item.getResponsable();
+                    
+                    CambioResponsableDialog dialogo = new CambioResponsableDialog(this, true, item);                    
+                    dialogo.setLocationRelativeTo(this);
+                    dialogo.setVisible(true);
+                    
+                    if(!dialogo.isVisible() && ultimoResponsable != item.getResponsable()){
+                        responsableItem.setText(item.getResponsable().getNombre());
+                        SecuenciaEstados sec = item.getSecuenciaEstados().get(item.getSecuenciaEstados().size()-1);
+                        textAreaSecuenciaEstados.append("Item: " + sec.getItem().getNombre() + "\n"
+                                                + "Estado: " + sec.getEstado().getNombre() + "\n"
+                                                + "Responsable: " + sec.getResponsable().getNombre() + "\n"
+                                                + "Última Fecha: " + sec.getUltFecha() + "\n"
+                                                + "------------------------------------------- \n");
+                        
+                        DefaultListModel<String> lmItemsACargoAdmin = new DefaultListModel<>();
+                        for (Item i : usuarioLogueado.getResponsabilidadItems()){
+                            lmItemsACargoAdmin.addElement(i.getNombre());
+                        }
+                        listaItemsACargoAdmin.setModel(lmItemsACargoAdmin);
+                        listaItemsACargoAdmin.setVisibleRowCount(8);
+                        listaItemsACargoAdmin.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+                        listaItemsACargoAdmin.setLayoutOrientation(JList.VERTICAL);                             
+                    }
+                }
+            }
+            else{
+                JOptionPane.showMessageDialog(this, 
+                                               "Por favor, seleccione un Item de la lista de Items para continuar.",
+                                               "Error",
+                                               JOptionPane.WARNING_MESSAGE);                              
+            }
+        }
+        else{
+            JOptionPane.showMessageDialog(this, 
+                                           "Sólo los líderes de proyecto o de equipo pueden cambiar de responsable.",
+                                           "Error",
+                                           JOptionPane.WARNING_MESSAGE);            
+        }
+    }//GEN-LAST:event_botonCambiarResponsableActionPerformed
 
     /**
      * @param args the command line arguments
@@ -625,6 +1057,7 @@ public class AdminFrame extends javax.swing.JFrame {
         });
     }
 
+    private Miembro usuarioLogueado;
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton botonAgregarEstadoTipoItem;
     private javax.swing.JButton botonAgregarMiembroEquipo;

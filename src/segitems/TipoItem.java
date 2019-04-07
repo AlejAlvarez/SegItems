@@ -6,13 +6,14 @@
 package segitems;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 /**
  *
  * @author Alejandro
  */
 public class TipoItem {
-    private static ArrayList<TipoItem> tiposItem;
+    private static ArrayList<TipoItem> tiposItem = new ArrayList<>();
     
     private ArrayList<Estado> estados;
     private Equipo equipo;
@@ -21,13 +22,44 @@ public class TipoItem {
     private Proyecto proyecto;
 
     
+    public TipoItem(String nombre, Proyecto proyecto) {
+        this.nombre = nombre;
+        this.proyecto = proyecto;
+        equipo = new Equipo();
+    }
+    
     private static void addTipoItem(TipoItem tipoItem) {
         tiposItem.add(tipoItem);
     }
     
-    public TipoItem(String nombre, Proyecto proyecto) {
-        this.nombre = nombre;
-        this.proyecto = proyecto;
+    public static ArrayList<TipoItem> buscarPorProyecto(Proyecto p){
+        ArrayList<TipoItem> list = new ArrayList<>();
+        
+        Iterator<TipoItem> iterator = tiposItem.iterator();
+        while (iterator.hasNext()){
+            TipoItem tipo = iterator.next();
+            if (tipo.getProyecto() != null){
+                if (tipo.getProyecto().equals(p)){
+                    list.add(tipo);
+                }                
+            }
+        }
+        return list;
+    }
+    
+    public static ArrayList<TipoItem> getTiposItem(){
+        return tiposItem;
+    }
+    
+    public static TipoItem buscarTipoItem(String nombre){
+        Iterator<TipoItem> iterator = tiposItem.iterator();
+        while (iterator.hasNext()){
+            TipoItem tipo = iterator.next();
+            if (tipo.getNombre().equals(nombre)){
+                return tipo;
+            }
+        }
+        return null;
     }
     
     public String getNombre(){
@@ -52,7 +84,6 @@ public class TipoItem {
 
     public void setEstadoInicial(Estado estadoInicial) {
         this.estadoInicial = estadoInicial;
-        estados.add(estadoInicial);
     }
     
     public void addEstado(Estado e){
@@ -73,14 +104,27 @@ public class TipoItem {
     
     public static void cargarTiposItemEjemplo(){
         Proyecto pAbby = Proyecto.buscarProyecto("Abby");
+        ArrayList<Miembro> miembros = Miembro.buscarPorProyecto(pAbby);
         
         TipoItem reporte = new TipoItem("Reporte de Bug", pAbby);
-        
         TipoItem.addTipoItem(reporte);
-        
-        reporte.setEstados(Estado.cargarEstadosEjemplo());      //la carga de estados devuelve un arrayList conteniendo todos los estados cargados
-        
+        reporte.setEstados(Estado.cargarEstadosEjemplo(reporte.getNombre()));      //la carga de estados devuelve un arrayList conteniendo todos los estados cargados
         reporte.setEstadoInicial(reporte.getEstados().get(0));  //se agrega el estado inicial llamado "inicial"
+        for (int i=0;i<3;i++){
+            reporte.getEquipo().addIntegrante(miembros.get(i));
+            miembros.get(i).setEquipo(reporte.getEquipo());
+        }
+        reporte.getEquipo().setLider(miembros.get(0));
+        
+        TipoItem mejora = new TipoItem("Mejora", pAbby);
+        TipoItem.addTipoItem(mejora);
+        mejora.setEstados(Estado.cargarEstadosEjemplo(mejora.getNombre()));
+        mejora.setEstadoInicial(mejora.getEstados().get(0));
+        for (int i=3;i<6;i++){
+            mejora.getEquipo().addIntegrante(miembros.get(i));
+            miembros.get(i).setEquipo(mejora.getEquipo());
+        }
+        mejora.getEquipo().setLider(miembros.get(3));
     }
     
 }

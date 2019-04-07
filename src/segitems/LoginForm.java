@@ -18,6 +18,7 @@ public class LoginForm extends javax.swing.JFrame {
      */
     public LoginForm() {
         initComponents();
+        setTitle("SegItems - Inicio de Sesión");
     }
 
     /**
@@ -125,7 +126,8 @@ public class LoginForm extends javax.swing.JFrame {
                 AdminFrame frame = new AdminFrame(miembro);
                 frame.setLocationRelativeTo(this);
                 frame.setVisible(true);
-                this.setVisible(false);
+                setVisible(false);
+                dispose();
             }
             else{
                 JOptionPane.showMessageDialog(this, 
