@@ -18,26 +18,14 @@ public class Proyecto {
     private static ArrayList<String> nombresProyectos = new ArrayList<>();
     private String nombre;
     private Miembro lider;
-//    private ArrayList<Miembro> miembros;
-//    private ArrayList<TipoItem> tiposItem;
-//    private ArrayList<Item> items; 
-//    private ArrayList<Estado> estados;
 
     public Proyecto(String nombre){
         this.nombre = nombre;
-//        miembros = new ArrayList<>();
-//        tiposItem = new ArrayList<>();
-//        items = new ArrayList<>();
-//        estados = new ArrayList<>();
     }
     
     public Proyecto(String nombre, Miembro lider) {
         this.nombre = nombre;
         this.lider = lider;
-//        miembros = new ArrayList<>();
-//        tiposItem = new ArrayList<>();
-//        items = new ArrayList<>();
-//        estados = new ArrayList<>();
     }
     
     public static Proyecto buscarProyecto(String nombre){
@@ -64,13 +52,6 @@ public class Proyecto {
         return nombresProyectos;
     }
     
-    public static void cargarProyectosEjemplo(){
-        Proyecto pAbby = new Proyecto("Abby");
-        Proyecto.addProyecto(pAbby);
-        Proyecto pBongo = new Proyecto("Bongo");
-        Proyecto.addProyecto(pBongo);        
-    }
-    
     public String getNombre() {
         return nombre;
     }
@@ -85,38 +66,13 @@ public class Proyecto {
 
     public void setLider(Miembro lider) {
         this.lider = lider;
-    }
-
-//    public ArrayList<TipoItem> getTiposItem() {
-//        return tiposItem;
-//    }
-//
-//    public void setTiposItem(ArrayList<TipoItem> tiposItem) {
-//        this.tiposItem = tiposItem;
-//    }
-//
-//    public ArrayList<Item> getItems() {
-//        return items;
-//    }
-//
-//    public void setItems(ArrayList<Item> items) {
-//        this.items = items;
-//    }
-//
-//    public ArrayList<Estado> getEstados() {
-//        return estados;
-//    }
-//
-//    public void setEstados(ArrayList<Estado> estados) {
-//        this.estados = estados;
-//    }
-//    
-//    public void addMiembro(Miembro m){
-//        miembros.add(m);
-//    }
-//    
-//    public ArrayList<Miembro> getMiembros(){
-//        return miembros;
-//    }    
+    } 
+    
+    public static void cargarProyectosEjemplo(){
+        Proyecto pAbby = new Proyecto("Abby");
+        Proyecto.addProyecto(pAbby);
+        Proyecto pBongo = new Proyecto("Bongo");
+        Proyecto.addProyecto(pBongo);        
+    }  
     
 }

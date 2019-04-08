@@ -304,11 +304,11 @@ public class AdminFrame extends javax.swing.JFrame {
         jLabel6 = new javax.swing.JLabel();
         scrollPaneItemsEnviadosAdmin = new javax.swing.JScrollPane();
         listaItemsEnviadosAdmin = new javax.swing.JList<>();
-        botonEnviarItem = new javax.swing.JButton();
+        botonEnviarItemAdmin = new javax.swing.JButton();
         jLabel7 = new javax.swing.JLabel();
         scrollPaneItemsACargoAdmin = new javax.swing.JScrollPane();
         listaItemsACargoAdmin = new javax.swing.JList<>();
-        botonAvanzarEstado = new javax.swing.JButton();
+        botonAvanzarEstadoAdmin = new javax.swing.JButton();
         botonCerrarSesion = new javax.swing.JButton();
         jSeparator1 = new javax.swing.JSeparator();
         jSeparator2 = new javax.swing.JSeparator();
@@ -376,6 +376,8 @@ public class AdminFrame extends javax.swing.JFrame {
         botonCambiarResponsable = new javax.swing.JButton();
         jScrollPane2 = new javax.swing.JScrollPane();
         textAreaSecuenciaEstados = new javax.swing.JTextArea();
+        botonAvanzarEstado = new javax.swing.JButton();
+        botonEnviarItem = new javax.swing.JButton();
         jPanel5 = new javax.swing.JPanel();
         jSeparator10 = new javax.swing.JSeparator();
         jSeparator11 = new javax.swing.JSeparator();
@@ -440,13 +442,13 @@ public class AdminFrame extends javax.swing.JFrame {
 
         jPanel1.add(scrollPaneItemsEnviadosAdmin, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 228, 220, 250));
 
-        botonEnviarItem.setText("Enviar nuevo Item");
-        botonEnviarItem.addActionListener(new java.awt.event.ActionListener() {
+        botonEnviarItemAdmin.setText("Enviar nuevo Item");
+        botonEnviarItemAdmin.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                botonEnviarItemActionPerformed(evt);
+                botonEnviarItemAdminActionPerformed(evt);
             }
         });
-        jPanel1.add(botonEnviarItem, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 490, 220, -1));
+        jPanel1.add(botonEnviarItemAdmin, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 490, 220, -1));
 
         jLabel7.setText("Items a cargo");
         jPanel1.add(jLabel7, new org.netbeans.lib.awtextra.AbsoluteConstraints(536, 206, -1, -1));
@@ -455,13 +457,13 @@ public class AdminFrame extends javax.swing.JFrame {
 
         jPanel1.add(scrollPaneItemsACargoAdmin, new org.netbeans.lib.awtextra.AbsoluteConstraints(479, 228, 220, 250));
 
-        botonAvanzarEstado.setText("Avanzar Estado en Item");
-        botonAvanzarEstado.addActionListener(new java.awt.event.ActionListener() {
+        botonAvanzarEstadoAdmin.setText("Avanzar Estado en Item");
+        botonAvanzarEstadoAdmin.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                botonAvanzarEstadoActionPerformed(evt);
+                botonAvanzarEstadoAdminActionPerformed(evt);
             }
         });
-        jPanel1.add(botonAvanzarEstado, new org.netbeans.lib.awtextra.AbsoluteConstraints(480, 490, 220, -1));
+        jPanel1.add(botonAvanzarEstadoAdmin, new org.netbeans.lib.awtextra.AbsoluteConstraints(480, 490, 220, -1));
 
         botonCerrarSesion.setText("Cerrar sesión");
         botonCerrarSesion.addActionListener(new java.awt.event.ActionListener() {
@@ -704,6 +706,22 @@ public class AdminFrame extends javax.swing.JFrame {
 
         jPanel4.add(jScrollPane2, new org.netbeans.lib.awtextra.AbsoluteConstraints(527, 120, -1, 280));
 
+        botonAvanzarEstado.setText("Avanzar Estado");
+        botonAvanzarEstado.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                botonAvanzarEstadoActionPerformed(evt);
+            }
+        });
+        jPanel4.add(botonAvanzarEstado, new org.netbeans.lib.awtextra.AbsoluteConstraints(310, 500, 160, -1));
+
+        botonEnviarItem.setText("Enviar Nuevo Item");
+        botonEnviarItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                botonEnviarItemActionPerformed(evt);
+            }
+        });
+        jPanel4.add(botonEnviarItem, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 430, 160, -1));
+
         jTabbedPane1.addTab("Items", jPanel4);
 
         jPanel5.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -913,7 +931,7 @@ public class AdminFrame extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_botonEditarMiembroActionPerformed
 
-    private void botonEnviarItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonEnviarItemActionPerformed
+    private void botonEnviarItemAdminActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonEnviarItemAdminActionPerformed
         ItemFormDialog dialogo = new ItemFormDialog(this, true, usuarioLogueado);
         dialogo.setLocationRelativeTo(this);
         dialogo.setVisible(true);
@@ -925,9 +943,18 @@ public class AdminFrame extends javax.swing.JFrame {
             listaItemsEnviadosAdmin.setModel(lmItemsEnviadosAdmin);
             listaItemsEnviadosAdmin.setVisibleRowCount(8);
             listaItemsEnviadosAdmin.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-            listaItemsEnviadosAdmin.setLayoutOrientation(JList.VERTICAL); 
+            listaItemsEnviadosAdmin.setLayoutOrientation(JList.VERTICAL);
+            
+            DefaultListModel<String> lmItems =  new DefaultListModel<>();
+            for (Item item : Item.getItems()){
+                lmItems.addElement(item.getNombre());
+            }
+            listaItems.setModel(lmItems);
+            listaItems.setVisibleRowCount(10);
+            listaItems.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+            listaItems.setLayoutOrientation(JList.VERTICAL);
         }
-    }//GEN-LAST:event_botonEnviarItemActionPerformed
+    }//GEN-LAST:event_botonEnviarItemAdminActionPerformed
 
     private void botonVerAvisoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonVerAvisoActionPerformed
         if(usuarioLogueado.hayAviso()){
@@ -948,7 +975,7 @@ public class AdminFrame extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_botonVerAvisoActionPerformed
 
-    private void botonAvanzarEstadoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonAvanzarEstadoActionPerformed
+    private void botonAvanzarEstadoAdminActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonAvanzarEstadoAdminActionPerformed
         if(listaItemsACargoAdmin.isSelectionEmpty() == false){
             if(listaItemsACargoAdmin.getValueIsAdjusting() == false){
                 CambioEstadoDialog dialogo = new CambioEstadoDialog(this, true, 
@@ -974,7 +1001,7 @@ public class AdminFrame extends javax.swing.JFrame {
                                            JOptionPane.WARNING_MESSAGE);              
             }
         }
-    }//GEN-LAST:event_botonAvanzarEstadoActionPerformed
+    }//GEN-LAST:event_botonAvanzarEstadoAdminActionPerformed
 
     private void botonCambiarResponsableActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonCambiarResponsableActionPerformed
         if(usuarioLogueado.getRol() == Rol.LEADER || (usuarioLogueado.getEquipo() != null && usuarioLogueado.getEquipo().esLider(usuarioLogueado))){
@@ -1022,6 +1049,67 @@ public class AdminFrame extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_botonCambiarResponsableActionPerformed
 
+    private void botonEnviarItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonEnviarItemActionPerformed
+        ItemFormDialog dialogo = new ItemFormDialog(this, true, usuarioLogueado);
+        dialogo.setLocationRelativeTo(this);
+        dialogo.setVisible(true);
+        if (!dialogo.isVisible()){
+            DefaultListModel<String> lmItemsEnviadosAdmin = new DefaultListModel<>();
+            for (Item item : usuarioLogueado.getItemsEnviados()){
+                lmItemsEnviadosAdmin.addElement(item.getNombre());
+            }
+            listaItemsEnviadosAdmin.setModel(lmItemsEnviadosAdmin);
+            listaItemsEnviadosAdmin.setVisibleRowCount(8);
+            listaItemsEnviadosAdmin.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+            listaItemsEnviadosAdmin.setLayoutOrientation(JList.VERTICAL);
+            
+            DefaultListModel<String> lmItems =  new DefaultListModel<>();
+            for (Item item : Item.getItems()){
+                lmItems.addElement(item.getNombre());
+            }
+            listaItems.setModel(lmItems);
+            listaItems.setVisibleRowCount(10);
+            listaItems.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+            listaItems.setLayoutOrientation(JList.VERTICAL);
+        }
+    }//GEN-LAST:event_botonEnviarItemActionPerformed
+
+    private void botonAvanzarEstadoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonAvanzarEstadoActionPerformed
+        if(listaItems.isSelectionEmpty() == false){
+            if(listaItems.getValueIsAdjusting() == false){
+                Item itemAvanzar = Item.buscarItem(listaItems.getSelectedValue());
+                if(itemAvanzar.getResponsable() == usuarioLogueado){
+                    CambioEstadoDialog dialogo = new CambioEstadoDialog(this, true, itemAvanzar);
+                    dialogo.setLocationRelativeTo(this);
+                    dialogo.setVisible(true);
+
+                    if (!dialogo.isVisible()){
+                        DefaultListModel<String> lmItemsACargoAdmin = new DefaultListModel<>();
+                        for (Item item : usuarioLogueado.getResponsabilidadItems()){
+                            lmItemsACargoAdmin.addElement(item.getNombre());
+                        }
+                        listaItemsACargoAdmin.setModel(lmItemsACargoAdmin);
+                        listaItemsACargoAdmin.setVisibleRowCount(8);
+                        listaItemsACargoAdmin.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+                        listaItemsACargoAdmin.setLayoutOrientation(JList.VERTICAL); 
+                    }                    
+                }
+                else{
+                    JOptionPane.showMessageDialog(this, 
+                                                   "Sólo los responsables de un Item pueden hacer que avance de Estado",
+                                                   "Error",
+                                                   JOptionPane.WARNING_MESSAGE);                                  
+                }
+            }
+        else{
+            JOptionPane.showMessageDialog(this, 
+                                           "Por favor, seleccione un Item de la lista de Items a Cargo para continuar.",
+                                           "Error",
+                                           JOptionPane.WARNING_MESSAGE);              
+            }
+        }
+    }//GEN-LAST:event_botonAvanzarEstadoActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -1065,6 +1153,7 @@ public class AdminFrame extends javax.swing.JFrame {
     private javax.swing.JButton botonAgregarProyecto;
     private javax.swing.JButton botonAgregarTipoItem;
     private javax.swing.JButton botonAvanzarEstado;
+    private javax.swing.JButton botonAvanzarEstadoAdmin;
     private javax.swing.JButton botonCambiarResponsable;
     private javax.swing.JButton botonCerrarSesion;
     private javax.swing.JButton botonEditarInfo;
@@ -1073,6 +1162,7 @@ public class AdminFrame extends javax.swing.JFrame {
     private javax.swing.JButton botonEliminarProyecto;
     private javax.swing.JButton botonEliminarTipoItem;
     private javax.swing.JButton botonEnviarItem;
+    private javax.swing.JButton botonEnviarItemAdmin;
     private javax.swing.JButton botonNuevoMiembro;
     private javax.swing.JButton botonQuitarEstadoTipoItem;
     private javax.swing.JButton botonQuitarMiembroEquipo;

@@ -23,6 +23,10 @@ public class Equipo {
         integrantes.add(m);
     }
     
+    public void eliminarIntegrante(Miembro m){
+        integrantes.remove(m);
+    }
+    
     public void setLider(Miembro m){
         lider = m;
     }

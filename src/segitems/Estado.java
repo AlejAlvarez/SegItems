@@ -15,7 +15,6 @@ import java.util.Iterator;
 public class Estado {
     private static ArrayList<Estado> estados = new ArrayList<>();
     private String nombre;
-    private Miembro responsable;
     private ArrayList<Estado> estadosSiguientes;
     
     public Estado(String nombre){
@@ -52,14 +51,6 @@ public class Estado {
     
     public String getNombre(){
         return nombre;
-    }
-    
-    public void setResponsable(Miembro m){
-        responsable = m;
-    }
-    
-    public Miembro getResponsable(){
-        return responsable;
     }
     
     public static ArrayList<Estado> cargarEstadosEjemplo(String tipoItem){

@@ -5,6 +5,8 @@
  */
 package segitems;
 
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.util.Iterator;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
@@ -36,6 +38,34 @@ public class UserFormDialog extends javax.swing.JDialog {
             cmProyectos.addElement(p.getNombre());
         }
         comboBoxProyectos.setModel(cmProyectos);
+        comboBoxProyectos.addItemListener(
+                new ItemListener(){
+                    public void itemStateChanged(ItemEvent event){
+                        if (event.getSource() == comboBoxProyectos){
+                            if(comboBoxProyectos.getSelectedIndex() == 0){
+                                DefaultComboBoxModel<String> cmEquipos = new DefaultComboBoxModel<>();
+                                cmEquipos.addElement("Ninguno");
+                                comboBoxEquipos.setModel(cmEquipos);
+                            }
+                            else{
+                                //se resta 1 debido a que esta el elemento de mas en el modelo de combobox llamado NINGUNO
+                                Proyecto proyecto = Proyecto.getProyectos().get(comboBoxProyectos.getSelectedIndex() - 1); 
+                                DefaultComboBoxModel<String> cmEquipos = new DefaultComboBoxModel<>();
+                                cmEquipos.addElement("Ninguno");
+                                for(TipoItem tipo : TipoItem.buscarPorProyecto(proyecto)){
+                                    cmEquipos.addElement(tipo.getNombre());
+                                }
+                                comboBoxEquipos.setModel(cmEquipos);
+                            }
+                        }
+                    }
+                }
+        );
+        
+        DefaultComboBoxModel<String> cmEquipos = new DefaultComboBoxModel<>();
+        cmEquipos.addElement("Ninguno");
+        comboBoxEquipos.setModel(cmEquipos);
+        
         edicion = false;
     }
     
@@ -55,6 +85,7 @@ public class UserFormDialog extends javax.swing.JDialog {
         cmRoles.addElement(Rol.ADMIN + "");
         cmRoles.addElement(Rol.LEADER + "");
         comboBoxRoles.setModel(cmRoles);
+        //PRESELECCIONADO EL ROL DEL MIEMBRO A EDITAR
         switch (m.getRol()){
             case USER:
                 comboBoxRoles.setSelectedIndex(0);
@@ -78,6 +109,45 @@ public class UserFormDialog extends javax.swing.JDialog {
             int i = Proyecto.getProyectos().indexOf(m.getProyecto());
             comboBoxProyectos.setSelectedIndex(i+1);
         }
+        comboBoxProyectos.addItemListener(
+                new ItemListener(){
+                    public void itemStateChanged(ItemEvent event){
+                        if (event.getSource() == comboBoxProyectos){
+                            if(comboBoxProyectos.getSelectedIndex() == 0){
+                                DefaultComboBoxModel<String> cmEquipos = new DefaultComboBoxModel<>();
+                                cmEquipos.addElement("Ninguno");
+                                comboBoxEquipos.setModel(cmEquipos);
+                            }
+                            else{
+                                //se resta 1 debido a que esta el elemento de mas en el modelo de combobox llamado NINGUNO
+                                Proyecto proyecto = Proyecto.getProyectos().get(comboBoxProyectos.getSelectedIndex() - 1); 
+                                DefaultComboBoxModel<String> cmEquipos = new DefaultComboBoxModel<>();
+                                cmEquipos.addElement("Ninguno");
+                                for(TipoItem tipo : TipoItem.buscarPorProyecto(proyecto)){
+                                    cmEquipos.addElement(tipo.getNombre());
+                                }
+                                comboBoxEquipos.setModel(cmEquipos);
+                            }
+                        }
+                    }
+                }
+        );
+        
+        DefaultComboBoxModel<String> cmEquipos = new DefaultComboBoxModel<>();
+        cmEquipos.addElement("Ninguno");
+        int indice = 0;
+        if(m.getProyecto() != null){
+            int i = 0;
+            for (TipoItem tipo : TipoItem.buscarPorProyecto(m.getProyecto())){
+                cmEquipos.addElement(tipo.getNombre());
+                if(m.getEquipo() == tipo.getEquipo()){
+                    indice = i;
+                }
+                i++;
+            }
+        }
+        comboBoxEquipos.setModel(cmEquipos);
+        comboBoxEquipos.setSelectedIndex(indice);
         
         edicion = true;
     }
@@ -106,6 +176,8 @@ public class UserFormDialog extends javax.swing.JDialog {
         jLabel6 = new javax.swing.JLabel();
         jLabel7 = new javax.swing.JLabel();
         campoPass = new javax.swing.JPasswordField();
+        comboBoxEquipos = new javax.swing.JComboBox<>();
+        jLabel1 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -138,28 +210,43 @@ public class UserFormDialog extends javax.swing.JDialog {
 
         jLabel7.setText("Proyecto");
 
+        jLabel1.setText("Equipo");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(77, 77, 77)
+                .addGap(19, 19, 19)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel3)
-                    .addComponent(jLabel2)
-                    .addComponent(jLabel4)
-                    .addComponent(jLabel5)
                     .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(comboBoxRoles, javax.swing.GroupLayout.Alignment.TRAILING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jLabel6)
-                            .addComponent(botonConfirmar, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 106, Short.MAX_VALUE))
+                        .addComponent(jLabel6)
+                        .addGap(40, 40, 40)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel3)
+                            .addComponent(jLabel2)
+                            .addComponent(jLabel4)
+                            .addComponent(jLabel5))
+                        .addContainerGap(221, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(comboBoxRoles, javax.swing.GroupLayout.PREFERRED_SIZE, 106, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jLabel7)
-                            .addComponent(comboBoxProyectos, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(botonCancelar, javax.swing.GroupLayout.DEFAULT_SIZE, 102, Short.MAX_VALUE))))
-                .addContainerGap(97, Short.MAX_VALUE))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(comboBoxProyectos, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel7))
+                        .addGap(18, 18, 18)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(comboBoxEquipos, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(0, 0, Short.MAX_VALUE))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabel1)
+                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(botonConfirmar, javax.swing.GroupLayout.PREFERRED_SIZE, 106, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(46, 46, 46)
+                        .addComponent(botonCancelar, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(70, 70, 70))))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(etiquetaAccion)
@@ -197,11 +284,13 @@ public class UserFormDialog extends javax.swing.JDialog {
                 .addGap(14, 14, 14)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel6)
-                    .addComponent(jLabel7))
+                    .addComponent(jLabel7)
+                    .addComponent(jLabel1))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 14, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(comboBoxRoles, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(comboBoxProyectos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(comboBoxProyectos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(comboBoxEquipos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(botonConfirmar)
@@ -236,10 +325,25 @@ public class UserFormDialog extends javax.swing.JDialog {
                     miembro.setRol(rol);
                     if (comboBoxProyectos.getSelectedIndex() == 0){
                         miembro.setProyecto(null);  //No se seleccionó ningún proyecto
+                        if(miembro.getEquipo() != null){
+                            miembro.getEquipo().eliminarIntegrante(miembro);
+                            miembro.setEquipo(null);                            
+                        }
                     }
                     else{
                         Proyecto proyectoSeleccionado = Proyecto.buscarProyecto(comboBoxProyectos.getItemAt(comboBoxProyectos.getSelectedIndex()));
                         miembro.setProyecto(proyectoSeleccionado);
+                        if(comboBoxEquipos.getSelectedIndex() == 0){
+                            if(miembro.getEquipo() != null){
+                                miembro.getEquipo().eliminarIntegrante(miembro);
+                                miembro.setEquipo(null);                            
+                            }
+                        }
+                        else{
+                            TipoItem tipo = TipoItem.buscarTipoItem(comboBoxEquipos.getItemAt(comboBoxEquipos.getSelectedIndex()));
+                            tipo.getEquipo().addIntegrante(miembro);
+                            miembro.setEquipo(tipo.getEquipo());                            
+                        }
                     }
                     JOptionPane.showMessageDialog(this, 
                                                    "¡Usuario editado con éxito!",
@@ -261,7 +365,12 @@ public class UserFormDialog extends javax.swing.JDialog {
                 else{
                     Proyecto proyectoSeleccionado = Proyecto.buscarProyecto(comboBoxProyectos.getItemAt(comboBoxProyectos.getSelectedIndex()));
                     Miembro nuevoMiembro = new Miembro(nombreMiembro, dniMiembro, usuarioMiembro, passMiembro, rol, proyectoSeleccionado);
-                    Miembro.addMiembro(nuevoMiembro);            
+                    Miembro.addMiembro(nuevoMiembro);  
+                    if(comboBoxEquipos.getSelectedIndex() != 0){
+                        TipoItem tipo = TipoItem.buscarTipoItem(comboBoxEquipos.getItemAt(comboBoxEquipos.getSelectedIndex()));
+                        tipo.getEquipo().addIntegrante(nuevoMiembro);
+                        nuevoMiembro.setEquipo(tipo.getEquipo());
+                    }
                 }
                 JOptionPane.showMessageDialog(this, 
                                                "¡Usuario creado con éxito!",
@@ -334,9 +443,11 @@ public class UserFormDialog extends javax.swing.JDialog {
     private javax.swing.JTextField campoNombre;
     private javax.swing.JPasswordField campoPass;
     private javax.swing.JTextField campoUsuario;
+    private javax.swing.JComboBox<String> comboBoxEquipos;
     private javax.swing.JComboBox<String> comboBoxProyectos;
     private javax.swing.JComboBox<String> comboBoxRoles;
     private javax.swing.JLabel etiquetaAccion;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
