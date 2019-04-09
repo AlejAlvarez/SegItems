@@ -97,6 +97,9 @@ public class UserFormDialog extends javax.swing.JDialog {
                 comboBoxRoles.setSelectedIndex(2);
                 break;
         }
+        if(m.getRol() != Rol.ADMIN){
+            comboBoxRoles.setEnabled(false);
+        }
         
         DefaultComboBoxModel<String> cmProyectos = new DefaultComboBoxModel<>();
         cmProyectos.addElement("Ninguno");
@@ -132,6 +135,9 @@ public class UserFormDialog extends javax.swing.JDialog {
                     }
                 }
         );
+        if(m.getRol() == Rol.USER){
+            comboBoxProyectos.setEnabled(false);
+        }
         
         DefaultComboBoxModel<String> cmEquipos = new DefaultComboBoxModel<>();
         cmEquipos.addElement("Ninguno");
@@ -148,6 +154,9 @@ public class UserFormDialog extends javax.swing.JDialog {
         }
         comboBoxEquipos.setModel(cmEquipos);
         comboBoxEquipos.setSelectedIndex(indice);
+        if(m.getRol() == Rol.USER && (m.getEquipo() != null && !m.getEquipo().esLider(m))){
+            comboBoxEquipos.setEnabled(false);
+        }
         
         edicion = true;
     }
@@ -302,89 +311,97 @@ public class UserFormDialog extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void botonConfirmarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonConfirmarActionPerformed
-        if(campoNombre.getText() != null && campoDni.getText() != null && campoUsuario.getText() != null && campoPass.getPassword() != null){
-            String nombreMiembro = campoNombre.getText();
-            Long dniMiembro = Long.parseLong(campoDni.getText());
-            String usuarioMiembro = campoUsuario.getText();
-            String passMiembro = String.valueOf(campoPass.getPassword());
-            Rol rol = Rol.USER;
-            switch(comboBoxRoles.getSelectedIndex()){
-                case 1:
-                    rol = Rol.ADMIN;
-                    break;
-                case 2:
-                    rol = Rol.LEADER;
-                    break;
-            }
-            if(edicion){
-                Miembro miembro = Miembro.buscarMiembro(usuarioMiembro);
-                if (miembro != null){
-                    miembro.setNombre(nombreMiembro);
-                    miembro.setDni(dniMiembro);
-                    miembro.setPass(passMiembro);
-                    miembro.setRol(rol);
-                    if (comboBoxProyectos.getSelectedIndex() == 0){
-                        miembro.setProyecto(null);  //No se seleccionó ningún proyecto
-                        if(miembro.getEquipo() != null){
-                            miembro.getEquipo().eliminarIntegrante(miembro);
-                            miembro.setEquipo(null);                            
-                        }
-                    }
-                    else{
-                        Proyecto proyectoSeleccionado = Proyecto.buscarProyecto(comboBoxProyectos.getItemAt(comboBoxProyectos.getSelectedIndex()));
-                        miembro.setProyecto(proyectoSeleccionado);
-                        if(comboBoxEquipos.getSelectedIndex() == 0){
+        try{
+            if(campoNombre.getText() != null && campoDni.getText() != null && campoUsuario.getText() != null && campoPass.getPassword() != null){
+                String nombreMiembro = campoNombre.getText();
+                Long dniMiembro = Long.parseLong(campoDni.getText());
+                String usuarioMiembro = campoUsuario.getText();
+                String passMiembro = String.valueOf(campoPass.getPassword());
+                Rol rol = Rol.USER;
+                switch(comboBoxRoles.getSelectedIndex()){
+                    case 1:
+                        rol = Rol.ADMIN;
+                        break;
+                    case 2:
+                        rol = Rol.LEADER;
+                        break;
+                }
+                if(edicion){
+                    Miembro miembro = Miembro.buscarMiembro(usuarioMiembro);
+                    if (miembro != null){
+                        miembro.setNombre(nombreMiembro);
+                        miembro.setDni(dniMiembro);
+                        miembro.setPass(passMiembro);
+                        miembro.setRol(rol);
+                        if (comboBoxProyectos.getSelectedIndex() == 0){
+                            miembro.setProyecto(null);  //No se seleccionó ningún proyecto
                             if(miembro.getEquipo() != null){
                                 miembro.getEquipo().eliminarIntegrante(miembro);
                                 miembro.setEquipo(null);                            
                             }
                         }
                         else{
+                            Proyecto proyectoSeleccionado = Proyecto.buscarProyecto(comboBoxProyectos.getItemAt(comboBoxProyectos.getSelectedIndex()));
+                            miembro.setProyecto(proyectoSeleccionado);
+                            if(comboBoxEquipos.getSelectedIndex() == 0){
+                                if(miembro.getEquipo() != null){
+                                    miembro.getEquipo().eliminarIntegrante(miembro);
+                                    miembro.setEquipo(null);                            
+                                }
+                            }
+                            else{
+                                TipoItem tipo = TipoItem.buscarTipoItem(comboBoxEquipos.getItemAt(comboBoxEquipos.getSelectedIndex()));
+                                tipo.getEquipo().addIntegrante(miembro);
+                                miembro.setEquipo(tipo.getEquipo());                            
+                            }
+                        }
+                        JOptionPane.showMessageDialog(this, 
+                                                       "¡Usuario editado con éxito!",
+                                                       "Operación exitosa",
+                                                       JOptionPane.PLAIN_MESSAGE); 
+                    }
+                    else{
+                        JOptionPane.showMessageDialog(this, 
+                                                       "Usuario no encontrado.",
+                                                       "Error",
+                                                       JOptionPane.ERROR_MESSAGE);                    
+                    }
+                }
+                else{
+                    if (comboBoxProyectos.getSelectedIndex() == 0){
+                        Miembro nuevoMiembro = new Miembro(nombreMiembro, dniMiembro, usuarioMiembro, passMiembro, rol);
+                        Miembro.addMiembro(nuevoMiembro);
+                    }
+                    else{
+                        Proyecto proyectoSeleccionado = Proyecto.buscarProyecto(comboBoxProyectos.getItemAt(comboBoxProyectos.getSelectedIndex()));
+                        Miembro nuevoMiembro = new Miembro(nombreMiembro, dniMiembro, usuarioMiembro, passMiembro, rol, proyectoSeleccionado);
+                        Miembro.addMiembro(nuevoMiembro);  
+                        if(comboBoxEquipos.getSelectedIndex() != 0){
                             TipoItem tipo = TipoItem.buscarTipoItem(comboBoxEquipos.getItemAt(comboBoxEquipos.getSelectedIndex()));
-                            tipo.getEquipo().addIntegrante(miembro);
-                            miembro.setEquipo(tipo.getEquipo());                            
+                            tipo.getEquipo().addIntegrante(nuevoMiembro);
+                            nuevoMiembro.setEquipo(tipo.getEquipo());
                         }
                     }
                     JOptionPane.showMessageDialog(this, 
-                                                   "¡Usuario editado con éxito!",
+                                                   "¡Usuario creado con éxito!",
                                                    "Operación exitosa",
-                                                   JOptionPane.PLAIN_MESSAGE); 
-                }
-                else{
-                    JOptionPane.showMessageDialog(this, 
-                                                   "Usuario no encontrado.",
-                                                   "Error",
-                                                   JOptionPane.ERROR_MESSAGE);                    
-                }
+                                                   JOptionPane.PLAIN_MESSAGE);                
+                }   
+                setVisible(false);
+                dispose();
             }
             else{
-                if (comboBoxProyectos.getSelectedIndex() == 0){
-                    Miembro nuevoMiembro = new Miembro(nombreMiembro, dniMiembro, usuarioMiembro, passMiembro, rol);
-                    Miembro.addMiembro(nuevoMiembro);
-                }
-                else{
-                    Proyecto proyectoSeleccionado = Proyecto.buscarProyecto(comboBoxProyectos.getItemAt(comboBoxProyectos.getSelectedIndex()));
-                    Miembro nuevoMiembro = new Miembro(nombreMiembro, dniMiembro, usuarioMiembro, passMiembro, rol, proyectoSeleccionado);
-                    Miembro.addMiembro(nuevoMiembro);  
-                    if(comboBoxEquipos.getSelectedIndex() != 0){
-                        TipoItem tipo = TipoItem.buscarTipoItem(comboBoxEquipos.getItemAt(comboBoxEquipos.getSelectedIndex()));
-                        tipo.getEquipo().addIntegrante(nuevoMiembro);
-                        nuevoMiembro.setEquipo(tipo.getEquipo());
-                    }
-                }
                 JOptionPane.showMessageDialog(this, 
-                                               "¡Usuario creado con éxito!",
-                                               "Operación exitosa",
-                                               JOptionPane.PLAIN_MESSAGE);                
-            }   
-            setVisible(false);
-            dispose();
+                                               "Por favor, complete todos los campos para poder continuar.",
+                                               "Error",
+                                               JOptionPane.WARNING_MESSAGE);            
+            }  
         }
-        else{
+        catch (Exception e){
             JOptionPane.showMessageDialog(this, 
-                                           "Por favor, complete todos los campos para poder continuar.",
+                                           "Por favor, complete el campo DNI únicamente con números.",
                                            "Error",
-                                           JOptionPane.WARNING_MESSAGE);            
+                                           JOptionPane.WARNING_MESSAGE);
         }
     }//GEN-LAST:event_botonConfirmarActionPerformed
 

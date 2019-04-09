@@ -856,62 +856,13 @@ public class AdminFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_botonAgregarTipoItemActionPerformed
 
     private void botonEliminarMiembroActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonEliminarMiembroActionPerformed
-        
-        if(!listaMiembros.isSelectionEmpty()){
-            Miembro miembro = Miembro.buscarMiembroPorNombre(listaMiembros.getSelectedValue());
-            
-            if(miembro.getRol() != Rol.LEADER && miembro.getRol() != Rol.ADMIN){
-                Miembro.eliminarMiembro(miembro);
-
-                DefaultListModel<String> lmMiembros = new DefaultListModel<>();
-                for (Miembro m : Miembro.getMiembros()){
-                    lmMiembros.addElement(m.getNombre());
-                }
-                listaMiembros.setModel(lmMiembros);
-                listaMiembros.setVisibleRowCount(8);
-                listaMiembros.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-                listaMiembros.setLayoutOrientation(JList.VERTICAL);                
-            }
-            else{
-                JOptionPane.showMessageDialog(this, 
-                                               "Los Administradores y Líderes de Proyecto no pueden ser eliminados.",
-                                               "Error",
-                                               JOptionPane.ERROR_MESSAGE);
-            }
-        }
-        else{
-            JOptionPane.showMessageDialog(this, 
-                                           "Por favor, seleccione un usuario para eliminar",
-                                           "Error",
-                                           JOptionPane.WARNING_MESSAGE);            
-        }
-        
-    }//GEN-LAST:event_botonEliminarMiembroActionPerformed
-
-    private void botonNuevoMiembroActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonNuevoMiembroActionPerformed
-        UserFormDialog dialogo = new UserFormDialog(this, true);
-        dialogo.setLocationRelativeTo(this);
-        dialogo.setVisible(true);
-        if (!dialogo.isVisible()){
-            DefaultListModel<String> lmMiembros = new DefaultListModel<>();
-            for (Miembro m : Miembro.getMiembros()){
-                lmMiembros.addElement(m.getNombre());
-            }
-            listaMiembros.setModel(lmMiembros);
-            listaMiembros.setVisibleRowCount(8);
-            listaMiembros.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-            listaMiembros.setLayoutOrientation(JList.VERTICAL); 
-        }
-    }//GEN-LAST:event_botonNuevoMiembroActionPerformed
-
-    private void botonEditarMiembroActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonEditarMiembroActionPerformed
-        if(!listaMiembros.isSelectionEmpty()){
-            if(listaMiembros.getValueIsAdjusting() == false){
+        if(usuarioLogueado.getRol() == Rol.ADMIN){
+            if(!listaMiembros.isSelectionEmpty()){
                 Miembro miembro = Miembro.buscarMiembroPorNombre(listaMiembros.getSelectedValue());
-                UserFormDialog dialogo = new UserFormDialog(this, true, miembro);
-                dialogo.setLocationRelativeTo(this);
-                dialogo.setVisible(true);
-                if (!dialogo.isVisible()){
+
+                if(miembro.getRol() != Rol.LEADER && miembro.getRol() != Rol.ADMIN){
+                    Miembro.eliminarMiembro(miembro);
+
                     DefaultListModel<String> lmMiembros = new DefaultListModel<>();
                     for (Miembro m : Miembro.getMiembros()){
                         lmMiembros.addElement(m.getNombre());
@@ -919,15 +870,87 @@ public class AdminFrame extends javax.swing.JFrame {
                     listaMiembros.setModel(lmMiembros);
                     listaMiembros.setVisibleRowCount(8);
                     listaMiembros.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-                    listaMiembros.setLayoutOrientation(JList.VERTICAL); 
+                    listaMiembros.setLayoutOrientation(JList.VERTICAL);                
                 }
+                else{
+                    JOptionPane.showMessageDialog(this, 
+                                                   "Los Administradores y Líderes de Proyecto no pueden ser eliminados.",
+                                                   "Error",
+                                                   JOptionPane.ERROR_MESSAGE);
+                }
+            }
+            else{
+                JOptionPane.showMessageDialog(this, 
+                                               "Por favor, seleccione un usuario para eliminar",
+                                               "Error",
+                                               JOptionPane.WARNING_MESSAGE);            
+            }
+        }
+        else{
+            JOptionPane.showMessageDialog(this, 
+                                           "Sólo los Administradores del Sistema pueden eliminar miembros.",
+                                           "Error",
+                                           JOptionPane.WARNING_MESSAGE);
+        }
+        
+    }//GEN-LAST:event_botonEliminarMiembroActionPerformed
+
+    private void botonNuevoMiembroActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonNuevoMiembroActionPerformed
+        if(usuarioLogueado.getRol() == Rol.ADMIN){
+            UserFormDialog dialogo = new UserFormDialog(this, true);
+            dialogo.setLocationRelativeTo(this);
+            dialogo.setVisible(true);
+            if (!dialogo.isVisible()){
+                DefaultListModel<String> lmMiembros = new DefaultListModel<>();
+                for (Miembro m : Miembro.getMiembros()){
+                    lmMiembros.addElement(m.getNombre());
+                }
+                listaMiembros.setModel(lmMiembros);
+                listaMiembros.setVisibleRowCount(8);
+                listaMiembros.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+                listaMiembros.setLayoutOrientation(JList.VERTICAL); 
             }            
         }
         else{
             JOptionPane.showMessageDialog(this, 
-                                           "Por favor, seleccione un usuario para editar",
+                                           "Sólo los Administradores del Sistema pueden agregar nuevos miembros.",
                                            "Error",
-                                           JOptionPane.WARNING_MESSAGE);            
+                                           JOptionPane.WARNING_MESSAGE);              
+        }
+    }//GEN-LAST:event_botonNuevoMiembroActionPerformed
+
+    private void botonEditarMiembroActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonEditarMiembroActionPerformed
+        if(usuarioLogueado.getRol() == Rol.ADMIN){
+            if(!listaMiembros.isSelectionEmpty()){
+                if(listaMiembros.getValueIsAdjusting() == false){
+                    Miembro miembro = Miembro.buscarMiembroPorNombre(listaMiembros.getSelectedValue());
+                    UserFormDialog dialogo = new UserFormDialog(this, true, miembro);
+                    dialogo.setLocationRelativeTo(this);
+                    dialogo.setVisible(true);
+                    if (!dialogo.isVisible()){
+                        DefaultListModel<String> lmMiembros = new DefaultListModel<>();
+                        for (Miembro m : Miembro.getMiembros()){
+                            lmMiembros.addElement(m.getNombre());
+                        }
+                        listaMiembros.setModel(lmMiembros);
+                        listaMiembros.setVisibleRowCount(8);
+                        listaMiembros.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+                        listaMiembros.setLayoutOrientation(JList.VERTICAL); 
+                    }
+                }            
+            }
+            else{
+                JOptionPane.showMessageDialog(this, 
+                                               "Por favor, seleccione un usuario para editar",
+                                               "Error",
+                                               JOptionPane.WARNING_MESSAGE);            
+            }            
+        }
+        else{
+            JOptionPane.showMessageDialog(this, 
+                                           "Sólo los Administradores del Sistema pueden editar otros miembros.",
+                                           "Error",
+                                           JOptionPane.WARNING_MESSAGE);                        
         }
     }//GEN-LAST:event_botonEditarMiembroActionPerformed
 

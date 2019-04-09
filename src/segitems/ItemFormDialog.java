@@ -134,26 +134,34 @@ public class ItemFormDialog extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void botonConfirmarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonConfirmarActionPerformed
-        if(campoNombre.getText() != null && campoPrioridad.getText() != null){
-            String nombreItem = campoNombre.getText();
-            int prioridadItem = Integer.parseInt(campoPrioridad.getText());  
-            TipoItem tipoItem = TipoItem.buscarTipoItem(comboBoxTiposItem.getItemAt(comboBoxTiposItem.getSelectedIndex()));
-            
-            Item nuevoItem = new Item(nombreItem, prioridadItem, tipoItem, miembro);
-            nuevoItem.inicializarItem();
-            
-            JOptionPane.showMessageDialog(this, 
-                                           "¡Item creado con éxito!",
-                                           "Operación exitosa",
-                                           JOptionPane.PLAIN_MESSAGE);
-            setVisible(false);
-            dispose();              
+        try{
+            if(campoNombre.getText() != null && campoPrioridad.getText() != null){
+                String nombreItem = campoNombre.getText();
+                int prioridadItem = Integer.parseInt(campoPrioridad.getText());  
+                TipoItem tipoItem = TipoItem.buscarTipoItem(comboBoxTiposItem.getItemAt(comboBoxTiposItem.getSelectedIndex()));
+
+                Item nuevoItem = new Item(nombreItem, prioridadItem, tipoItem, miembro);
+                nuevoItem.inicializarItem();
+
+                JOptionPane.showMessageDialog(this, 
+                                               "¡Item creado con éxito!",
+                                               "Operación exitosa",
+                                               JOptionPane.PLAIN_MESSAGE);
+                setVisible(false);
+                dispose();              
+            }
+            else{
+                JOptionPane.showMessageDialog(this, 
+                                               "Por favor, complete todos los campos para poder continuar.",
+                                               "Error",
+                                               JOptionPane.WARNING_MESSAGE);              
+            }            
         }
-        else{
+        catch(Exception e){
             JOptionPane.showMessageDialog(this, 
-                                           "Por favor, complete todos los campos para poder continuar.",
+                                           "Por favor, complete el campo Prioridad únicamente con números.",
                                            "Error",
-                                           JOptionPane.WARNING_MESSAGE);              
+                                           JOptionPane.WARNING_MESSAGE);                          
         }
     }//GEN-LAST:event_botonConfirmarActionPerformed
 
