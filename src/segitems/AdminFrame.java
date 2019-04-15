@@ -353,6 +353,8 @@ public class AdminFrame extends javax.swing.JFrame {
         botonQuitarEstadoTipoItem = new javax.swing.JButton();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
+        jLabel28 = new javax.swing.JLabel();
+        jLabel29 = new javax.swing.JLabel();
         jPanel4 = new javax.swing.JPanel();
         scrollPaneItems = new javax.swing.JScrollPane();
         listaItems = new javax.swing.JList<>();
@@ -378,6 +380,11 @@ public class AdminFrame extends javax.swing.JFrame {
         textAreaSecuenciaEstados = new javax.swing.JTextArea();
         botonAvanzarEstado = new javax.swing.JButton();
         botonEnviarItem = new javax.swing.JButton();
+        jLabel4 = new javax.swing.JLabel();
+        jLabel12 = new javax.swing.JLabel();
+        jLabel14 = new javax.swing.JLabel();
+        jLabel26 = new javax.swing.JLabel();
+        jLabel27 = new javax.swing.JLabel();
         jPanel5 = new javax.swing.JPanel();
         jSeparator10 = new javax.swing.JSeparator();
         jSeparator11 = new javax.swing.JSeparator();
@@ -566,11 +573,11 @@ public class AdminFrame extends javax.swing.JFrame {
 
         scrollPaneEquipoTipoItem.setViewportView(listaEquipoTipoItem);
 
-        jPanel3.add(scrollPaneEquipoTipoItem, new org.netbeans.lib.awtextra.AbsoluteConstraints(340, 120, 160, 290));
+        jPanel3.add(scrollPaneEquipoTipoItem, new org.netbeans.lib.awtextra.AbsoluteConstraints(340, 90, 160, 290));
 
         scrollPaneEstadosTipoItem.setViewportView(listaEstadosTipoItem);
 
-        jPanel3.add(scrollPaneEstadosTipoItem, new org.netbeans.lib.awtextra.AbsoluteConstraints(580, 120, 150, 290));
+        jPanel3.add(scrollPaneEstadosTipoItem, new org.netbeans.lib.awtextra.AbsoluteConstraints(580, 90, 150, 290));
 
         jLabel15.setFont(new java.awt.Font("Dialog", 1, 16)); // NOI18N
         jLabel15.setText("Tipos de Item");
@@ -595,35 +602,43 @@ public class AdminFrame extends javax.swing.JFrame {
 
         jLabel17.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
         jLabel17.setText("Equipo");
-        jPanel3.add(jLabel17, new org.netbeans.lib.awtextra.AbsoluteConstraints(390, 90, -1, -1));
+        jPanel3.add(jLabel17, new org.netbeans.lib.awtextra.AbsoluteConstraints(390, 70, -1, -1));
 
         jLabel18.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
         jLabel18.setText("Estados");
-        jPanel3.add(jLabel18, new org.netbeans.lib.awtextra.AbsoluteConstraints(630, 90, -1, -1));
+        jPanel3.add(jLabel18, new org.netbeans.lib.awtextra.AbsoluteConstraints(630, 70, -1, -1));
 
         botonAgregarMiembroEquipo.setText("Agregar Miembro");
         botonAgregarMiembroEquipo.setEnabled(false);
-        jPanel3.add(botonAgregarMiembroEquipo, new org.netbeans.lib.awtextra.AbsoluteConstraints(340, 430, 160, -1));
+        jPanel3.add(botonAgregarMiembroEquipo, new org.netbeans.lib.awtextra.AbsoluteConstraints(340, 390, 160, -1));
 
         botonQuitarMiembroEquipo.setText("Quitar Miembro");
         botonQuitarMiembroEquipo.setEnabled(false);
-        jPanel3.add(botonQuitarMiembroEquipo, new org.netbeans.lib.awtextra.AbsoluteConstraints(340, 470, 160, -1));
+        jPanel3.add(botonQuitarMiembroEquipo, new org.netbeans.lib.awtextra.AbsoluteConstraints(340, 430, 160, -1));
 
         botonAgregarEstadoTipoItem.setText("Agregar Estado");
         botonAgregarEstadoTipoItem.setEnabled(false);
-        jPanel3.add(botonAgregarEstadoTipoItem, new org.netbeans.lib.awtextra.AbsoluteConstraints(580, 430, 150, -1));
+        jPanel3.add(botonAgregarEstadoTipoItem, new org.netbeans.lib.awtextra.AbsoluteConstraints(580, 390, 150, -1));
 
         botonQuitarEstadoTipoItem.setText("Quitar Estado");
         botonQuitarEstadoTipoItem.setEnabled(false);
-        jPanel3.add(botonQuitarEstadoTipoItem, new org.netbeans.lib.awtextra.AbsoluteConstraints(580, 470, 150, -1));
+        jPanel3.add(botonQuitarEstadoTipoItem, new org.netbeans.lib.awtextra.AbsoluteConstraints(580, 430, 150, -1));
 
         jLabel2.setFont(new java.awt.Font("Dialog", 2, 10)); // NOI18N
         jLabel2.setText("Nota: para ver los Tipos de Item de un determinado Proyecto,");
-        jPanel3.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 60, -1, -1));
+        jPanel3.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(390, 480, -1, -1));
 
         jLabel3.setFont(new java.awt.Font("Dialog", 2, 10)); // NOI18N
         jLabel3.setText("seleccione un proyecto dentro de la pestaña \"Proyectos\".");
-        jPanel3.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(400, 70, -1, -1));
+        jPanel3.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(400, 490, -1, -1));
+
+        jLabel28.setFont(new java.awt.Font("Dialog", 2, 10)); // NOI18N
+        jLabel28.setText("Para ver todos los Tipos de Item, seleccione \"Todos\" en la");
+        jPanel3.add(jLabel28, new org.netbeans.lib.awtextra.AbsoluteConstraints(400, 500, -1, -1));
+
+        jLabel29.setFont(new java.awt.Font("Dialog", 2, 10)); // NOI18N
+        jLabel29.setText("pestaña \"Proyectos\".");
+        jPanel3.add(jLabel29, new org.netbeans.lib.awtextra.AbsoluteConstraints(400, 510, -1, -1));
 
         jTabbedPane1.addTab("Tipos de Item", jPanel3);
 
@@ -721,6 +736,26 @@ public class AdminFrame extends javax.swing.JFrame {
             }
         });
         jPanel4.add(botonEnviarItem, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 430, 160, -1));
+
+        jLabel4.setFont(new java.awt.Font("Dialog", 2, 10)); // NOI18N
+        jLabel4.setText("Nota: para ver todos los Items, seleccione");
+        jPanel4.add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(540, 430, -1, -1));
+
+        jLabel12.setFont(new java.awt.Font("Dialog", 2, 10)); // NOI18N
+        jLabel12.setText("\"Todos\" en la pestaña de \"Tipos de Item\".");
+        jPanel4.add(jLabel12, new org.netbeans.lib.awtextra.AbsoluteConstraints(550, 440, -1, -1));
+
+        jLabel14.setFont(new java.awt.Font("Dialog", 2, 10)); // NOI18N
+        jLabel14.setText("Para ver los Items de un determinado Tipo");
+        jPanel4.add(jLabel14, new org.netbeans.lib.awtextra.AbsoluteConstraints(550, 450, -1, -1));
+
+        jLabel26.setFont(new java.awt.Font("Dialog", 2, 10)); // NOI18N
+        jLabel26.setText("de Item, seleccione el mismo en la pestaña");
+        jPanel4.add(jLabel26, new org.netbeans.lib.awtextra.AbsoluteConstraints(550, 460, -1, -1));
+
+        jLabel27.setFont(new java.awt.Font("Dialog", 2, 10)); // NOI18N
+        jLabel27.setText("\"Tipos de Item\".");
+        jPanel4.add(jLabel27, new org.netbeans.lib.awtextra.AbsoluteConstraints(550, 470, -1, -1));
 
         jTabbedPane1.addTab("Items", jPanel4);
 
@@ -1197,7 +1232,9 @@ public class AdminFrame extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
+    private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel13;
+    private javax.swing.JLabel jLabel14;
     private javax.swing.JLabel jLabel15;
     private javax.swing.JLabel jLabel16;
     private javax.swing.JLabel jLabel17;
@@ -1210,12 +1247,17 @@ public class AdminFrame extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel23;
     private javax.swing.JLabel jLabel24;
     private javax.swing.JLabel jLabel25;
+    private javax.swing.JLabel jLabel26;
+    private javax.swing.JLabel jLabel27;
+    private javax.swing.JLabel jLabel28;
+    private javax.swing.JLabel jLabel29;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel32;
     private javax.swing.JLabel jLabel33;
     private javax.swing.JLabel jLabel34;
     private javax.swing.JLabel jLabel35;
     private javax.swing.JLabel jLabel36;
+    private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel41;
     private javax.swing.JLabel jLabel42;
     private javax.swing.JLabel jLabel43;
